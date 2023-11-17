@@ -12,8 +12,8 @@ body {
 
 .container {
   display: block;
-  width: 50%;
   margin: auto;
+  width: 50%;
 }
 
 .btn {
