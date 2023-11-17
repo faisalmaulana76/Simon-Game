@@ -1,36 +1,57 @@
-const buttonColours = ["red", "green", "blue", "yellow"];
+const buttonColors = ["red", "green", "blue", "yellow"];
 let gamePattern = [];
-
+let userClickedPattern = [];
 let x = 0;
+let level = 0;
 
-function boxPlay(color) {
-  let src;
-  switch (color) {
-    case "red":
-      src = "./sounds/red.mp3";
-      break;
-    case "green":
-      src = "./sounds/green.mp3";
-      break;
-    case "blue":
-      src = "./sounds/blue.mp3";
-      break;
-    case "yellow":
-      src = "./sounds/yellow.mp3";
-      break;
-  }
-  const audio = new Audio(src);
+function playSound(name) {
+  const audio = new Audio(`./sounds/${name}.mp3`);
   audio.play();
-  $(`#${color}`).fadeOut(100).fadeIn(100);
+}
+
+function animatePress(element) {
+  element.addClass("pressed");
+  setTimeout(() => {
+    element.removeClass("pressed");
+  }, 100);
+}
+function checkAnswer(currentLevel) {
+  if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+    console.log("succes");
+    if (gamePattern.length === userClickedPattern.length) {
+      setTimeout(function () {
+        nextSequence();
+      }, 1000);
+    }
+  } else {
+    console.log("wrong");
+  }
 }
 function nextSequence() {
   const randomNumber = Math.floor(Math.random() * 4);
-  const randomChosenColour = buttonColours[randomNumber];
-  console.log(randomChosenColour);
-  gamePattern.push(randomChosenColour);
-  boxPlay(randomChosenColour);
+  const randomChosenColors = buttonColors[randomNumber];
+  console.log(randomChosenColors);
+  gamePattern.push(randomChosenColors);
+  $(`#${randomChosenColors}`).fadeOut(100).fadeIn(100).fadeIn(100);
+  playSound(randomChosenColors);
+  level += 1;
+  $("#level-title").text(`Level ${level}`);
 }
+$(".btn").on("click", function () {
+  const userChosenColors = $(this).attr("id");
+  userClickedPattern.push(userChosenColors);
+  playSound(userChosenColors);
+  animatePress($(this));
+  checkAnswer(userClickedPattern.length - 1);
+});
+
 $(document).on("click", () => {
+  if (x > 0) return;
+  x++;
+  nextSequence();
+});
+
+$(document).on("keydown", () => {
   if (x > 0) return;
   x++;
   nextSequence();
